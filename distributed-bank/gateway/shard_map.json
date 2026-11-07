@@ -1,0 +1,22 @@
+{
+  "shards": [
+    {
+      "id": "Shard-A",
+      "range_start": 1,
+      "range_end": 1000,
+      "replicas": [
+        "http://bank-server-a1:8000",
+        "http://bank-server-a2:8000"
+      ]
+    },
+    {
+      "id": "Shard-B",
+      "range_start": 1001,
+      "range_end": 2000,
+      "replicas": [
+        "http://bank-server-b1:8000",
+        "http://bank-server-b2:8000"
+      ]
+    }
+  ]
+}

@@ -142,3 +142,18 @@ services:
         condition: service_started
       bank-server-b1:
         condition: service_started
+
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    environment:
+      SHARD_MAP_PATH: shard_map.json
+      COORDINATOR_URL: http://coordinator:8000
+    ports:
+      - "8080:8000"
+    depends_on:
+      - coordinator
+      - bank-server-a1
+      - bank-server-a2
+      - bank-server-b1
+      - bank-server-b2
