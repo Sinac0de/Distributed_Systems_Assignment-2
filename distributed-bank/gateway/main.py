@@ -91,6 +91,10 @@ class TransferPayload(BaseModel):
     target_acc: str
     amount: Decimal
 
+class RegisterReplicaPayload(BaseModel):
+    shard_id: str
+    replica_url: str
+
 @app.get("/health")
 def health_check():
     return {
@@ -142,6 +146,18 @@ async def withdraw(account_id: str, payload: AmountPayload):
             raise HTTPException(status_code=res.status_code, detail=res.json().get("detail", "Withdrawal failed"))
         return res.json()
 
+@app.post("/replicas/register")
+def register_replica(payload: RegisterReplicaPayload):
+    for shard in SHARD_CONFIG["shards"]:
+        if shard["id"] == payload.shard_id:
+            if payload.replica_url not in shard["replicas"]:
+                shard["replicas"].append(payload.replica_url)
+                logger.info(f"Dynamically registered new replica {payload.replica_url} for {payload.shard_id}")
+            if payload.replica_url not in healthy_replicas[payload.shard_id]:
+                healthy_replicas[payload.shard_id].append(payload.replica_url)
+            return {"status": "REGISTERED", "shard_id": payload.shard_id, "replica_url": payload.replica_url}
+    raise HTTPException(status_code=404, detail=f"Shard {payload.shard_id} not found")
+
 @app.post("/transfer")
 async def transfer(payload: TransferPayload):
     src_shard = get_shard_by_account(payload.source_acc)
@@ -186,3 +202,4 @@ async def get_transaction_status(tx_id: str):
         if res.status_code != 200:
             raise HTTPException(status_code=res.status_code, detail="Transaction not found or query failed")
         return res.json()
+

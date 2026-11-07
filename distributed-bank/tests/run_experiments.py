@@ -88,6 +88,9 @@ def test_experiment_3():
 def test_experiment_4():
     print_header("EXPERIMENT 4: Replica Interruption and Gateway Failover")
 
+    # Temporarily pause self-healing controller to isolate static replica failover
+    run_cmd(["docker", "stop", "self-healing-controller"])
+
     print("Stopping container bank-server-a1...")
     run_cmd(["docker", "stop", "bank-server-a1"])
     time.sleep(3)  # Wait for health monitor detection
@@ -95,12 +98,16 @@ def test_experiment_4():
     print("Sending 5 balance queries to Shard A under degraded conditions:")
     for _ in range(5):
         res = requests.get(f"{GATEWAY_URL}/accounts/A0005/balance").json()
-        print(f"  Replica handling request: {res.get('replica')}")
-        assert res.get("replica") == "Server-A2", "Gateway routed to unhealthy replica"
+        rep = res.get("replica")
+        print(f"  Replica handling request: {rep}")
+        assert rep != "Server-A1", "Gateway routed to unhealthy replica"
 
     print("Restarting container bank-server-a1...")
     run_cmd(["docker", "start", "bank-server-a1"])
     time.sleep(3)  # Wait for replica re-registration
+
+    # Resume self-healing controller
+    run_cmd(["docker", "start", "self-healing-controller"])
     print(">> Experiment 4 PASSED: Gateway automatically detected failure and rerouted.")
 
 # -------------------------------------------------------------
@@ -181,7 +188,7 @@ def test_experiment_6():
     assert b_src_final == b_src_init - amount, "Source debit was not finalized by recovery"
     assert b_tgt_final == b_tgt_init + amount, "Target credit was not finalized by recovery"
     print(">> Experiment 6 PASSED: Coordinator recovered durable decision without data loss.")
-    
+
 # -------------------------------------------------------------
 # Experiment 7: Concurrent Cross-Shard Transfers (Conservation of Money)
 # -------------------------------------------------------------

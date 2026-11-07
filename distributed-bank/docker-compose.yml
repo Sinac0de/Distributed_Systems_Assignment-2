@@ -157,3 +157,19 @@ services:
       - bank-server-a2
       - bank-server-b1
       - bank-server-b2
+
+  self-healing-controller:
+    build: ./self-healing
+    container_name: self-healing-controller
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - self-healing-data:/data
+    environment:
+      GATEWAY_URL: http://gateway:8000
+      DOCKER_NETWORK: distributed-bank_default
+      STATE_FILE_PATH: /data/controller_state.json
+    depends_on:
+      - gateway
+
+volumes:
+  self-healing-data:
