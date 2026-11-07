@@ -121,3 +121,24 @@ services:
     depends_on:
       db-shard-b:
         condition: service_healthy
+
+  coordinator:
+    build: ./coordinator
+    container_name: coordinator
+    environment:
+      DB_HOST: db-coordinator
+      DB_PORT: 5432
+      DB_NAME: coordinator_db
+      DB_USER: postgres
+      DB_PASSWORD: password
+      SHARD_A_REPLICAS: http://bank-server-a1:8000,http://bank-server-a2:8000
+      SHARD_B_REPLICAS: http://bank-server-b1:8000,http://bank-server-b2:8000
+    ports:
+      - "8005:8000"
+    depends_on:
+      db-coordinator:
+        condition: service_healthy
+      bank-server-a1:
+        condition: service_started
+      bank-server-b1:
+        condition: service_started
