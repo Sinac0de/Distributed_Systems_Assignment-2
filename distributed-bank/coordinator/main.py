@@ -65,12 +65,16 @@ def get_healthy_replica_url(shard_name: str) -> Optional[str]:
 
 def recover_pending_transactions():
     logger.info("Starting recovery check for unresolved distributed transactions...")
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT tx_id, source_acc, target_acc, amount, state FROM coordinator_tx_log WHERE state NOT IN ('COMPLETED', 'ABORTED');"
-            )
-            unresolved = cur.fetchall()
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT tx_id, source_acc, target_acc, amount, state FROM coordinator_tx_log WHERE state NOT IN ('COMPLETED', 'ABORTED');"
+                )
+                unresolved = cur.fetchall()
+    except Exception as e:
+        logger.error(f"Failed to query unresolved transactions during startup: {str(e)}")
+        return
 
     if not unresolved:
         logger.info("No unresolved transactions found during startup.")
@@ -90,19 +94,23 @@ def recover_pending_transactions():
                 continue
 
             if state == "COMMIT_DECIDED":
-                # Durable commit was decided; complete commit across both shards
                 logger.info(f"Recovering tx {tx_id}: Retrying COMMIT on both participants...")
-                client.post(f"{src_url}/2pc/commit", json={"tx_id": tx_id})
-                client.post(f"{tgt_url}/2pc/commit", json={"tx_id": tx_id})
-                update_tx_state(tx_id, "COMPLETED")
-                logger.info(f"Tx {tx_id} successfully recovered and marked as COMPLETED.")
+                try:
+                    client.post(f"{src_url}/2pc/commit", json={"tx_id": tx_id})
+                    client.post(f"{tgt_url}/2pc/commit", json={"tx_id": tx_id})
+                    update_tx_state(tx_id, "COMPLETED")
+                    logger.info(f"Tx {tx_id} successfully recovered and marked as COMPLETED.")
+                except Exception as e:
+                    logger.error(f"Error finalizing commit during recovery of tx {tx_id}: {str(e)}")
             else:
-                # State was INITIATED, PREPARING, PREPARED, or ABORT_DECIDED; safely abort
                 logger.info(f"Recovering tx {tx_id}: Rolling back participants to safe state...")
-                client.post(f"{src_url}/2pc/abort", json={"tx_id": tx_id})
-                client.post(f"{tgt_url}/2pc/abort", json={"tx_id": tx_id})
-                update_tx_state(tx_id, "ABORTED")
-                logger.info(f"Tx {tx_id} safely rolled back and marked as ABORTED.")
+                try:
+                    client.post(f"{src_url}/2pc/abort", json={"tx_id": tx_id})
+                    client.post(f"{tgt_url}/2pc/abort", json={"tx_id": tx_id})
+                    update_tx_state(tx_id, "ABORTED")
+                    logger.info(f"Tx {tx_id} safely rolled back and marked as ABORTED.")
+                except Exception as e:
+                    logger.error(f"Error aborting tx {tx_id}: {str(e)}")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
