@@ -121,18 +121,20 @@ def reconcile():
     for shard_id, spec in SHARD_SPECS.items():
         current_containers = managed.setdefault(shard_id, [])
 
-        # Filter out stopped or dead replicas
+       # Filter out stopped or dead replicas
         active_containers = []
         for c_name in current_containers:
             if is_container_healthy(c_name):
                 active_containers.append(c_name)
             else:
-                logger.warning(f"Replica container {c_name} in {shard_id} is dead or unresponsive. Cleaning up...")
-                try:
-                    c = client.containers.get(c_name)
-                    c.remove(force=True)
-                except Exception:
-                    pass
+                logger.warning(f"Replica container {c_name} in {shard_id} is dead or unresponsive.")
+                # Only forcefully remove dynamic/auto-spawned replacement containers
+                if "auto" in c_name:
+                    try:
+                        c = client.containers.get(c_name)
+                        c.remove(force=True)
+                    except Exception:
+                        pass
 
         # Re-include baseline static containers from compose if they are healthy
         try:

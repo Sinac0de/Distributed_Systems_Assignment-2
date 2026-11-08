@@ -27,6 +27,9 @@ npm run dev
 
 Open <http://localhost:5173>.
 
+Use the sun/moon button in the header to switch between the dark and light
+themes. The choice is stored in `localStorage` and restored before first paint.
+
 Production build / preview:
 
 ```powershell
@@ -94,6 +97,8 @@ All drills are safe to replay; **Restore cluster** starts every allowed containe
 
 ## Notes
 
+- The color palette is exposed as RGB CSS variables. Adding the `light` class to
+  `<html>` remaps those variables, so both themes reuse the same utility classes.
 - Liquidity and conservation are computed from a rotating sample of test accounts, so the
   displayed total can move by the amount of a transfer whose two accounts are not both in
   the current sample.

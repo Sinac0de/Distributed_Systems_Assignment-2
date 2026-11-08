@@ -94,7 +94,7 @@ export function LogConsole({ logs, logsPaused, pendingLogCount, actions }) {
         </div>
       </div>
 
-      <div className="relative bg-[#05080c]">
+      <div className="relative bg-ink">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
         <div
           ref={scrollRef}

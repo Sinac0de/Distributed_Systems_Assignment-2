@@ -4,6 +4,67 @@
 
 :root {
   color-scheme: dark;
+  --ink: 5 7 11;
+  --surface: 10 14 20;
+  --elevated: 11 17 23;
+  --fg: 230 237 243;
+  --grid-line: 255 255 255;
+  --grid-alpha: 0.026;
+}
+
+.light {
+  color-scheme: light;
+  --ink: 243 246 250;
+  --surface: 255 255 255;
+  --elevated: 255 255 255;
+  --fg: 30 41 59;
+  --grid-line: 15 23 42;
+  --grid-alpha: 0.05;
+
+  /* `white` utilities are used as soft overlays/borders on the dark theme.
+     In light mode they become low-alpha ink so the same classes stay visible. */
+  --white: 15 23 42;
+  /* `black` utilities are used for inset surfaces; in light mode they are a
+     soft gray tint instead of a dark wash. */
+  --black: 226 232 240;
+
+  --slate-50: 2 6 23;
+  --slate-100: 15 23 42;
+  --slate-200: 30 41 59;
+  --slate-300: 51 65 85;
+  --slate-400: 71 85 105;
+  --slate-500: 100 116 139;
+  --slate-600: 125 137 155;
+  --slate-700: 155 166 182;
+
+  --emerald-200: 6 78 59;
+  --emerald-300: 4 120 87;
+  --emerald-400: 16 185 129;
+  --emerald-500: 5 150 105;
+
+  --cyan-200: 21 94 117;
+  --cyan-300: 14 116 144;
+  --cyan-400: 8 145 178;
+
+  --amber-200: 146 64 14;
+  --amber-300: 180 83 9;
+  --amber-400: 217 119 6;
+
+  --rose-200: 159 18 57;
+  --rose-300: 190 18 60;
+  --rose-400: 225 29 72;
+  --rose-950: 255 228 230;
+
+  --violet-200: 91 33 182;
+  --violet-300: 109 40 217;
+  --violet-400: 124 58 237;
+
+  --blue-200: 30 64 175;
+  --blue-300: 29 78 216;
+  --blue-400: 37 99 235;
+
+  --teal-300: 15 118 110;
+  --teal-400: 13 148 136;
 }
 
 html,
@@ -14,17 +75,23 @@ body,
 
 body {
   margin: 0;
-  background-color: #05070b;
-  color: #e6edf3;
+  background-color: rgb(var(--ink));
+  color: rgb(var(--fg));
   font-family: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 ::selection {
   background: rgba(52, 211, 153, 0.28);
   color: #f0fdf4;
+}
+
+.light ::selection {
+  background: rgba(16, 185, 129, 0.22);
+  color: #022c22;
 }
 
 * {
@@ -52,7 +119,7 @@ body {
 
 @layer components {
   .panel {
-    @apply relative rounded-2xl border border-white/[0.07] bg-[#0a0e14]/80 shadow-panel backdrop-blur-sm;
+    @apply relative rounded-2xl border border-white/[0.07] bg-surface/80 shadow-panel backdrop-blur-sm;
   }
 
   .panel-head {
@@ -82,10 +149,18 @@ body {
 
 .grid-surface {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+    linear-gradient(rgb(var(--grid-line) / var(--grid-alpha)) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--grid-line) / var(--grid-alpha)) 1px, transparent 1px);
   background-size: 30px 30px;
   background-position: -1px -1px;
+}
+
+.light .panel {
+  box-shadow: 0 20px 55px -38px rgba(15, 23, 42, 0.35);
+}
+
+.light .noise::after {
+  opacity: 0.02;
 }
 
 .noise::after {

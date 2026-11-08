@@ -210,7 +210,7 @@ export function Toasts({ toasts, onDismiss }) {
               exit={{ opacity: 0, x: 20, scale: 0.97 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className={cn(
-                'pointer-events-auto flex items-start gap-3 rounded-xl border bg-[#0b1017]/95 p-3 shadow-2xl backdrop-blur-xl',
+                'pointer-events-auto flex items-start gap-3 rounded-xl border bg-elevated/95 p-3 shadow-2xl backdrop-blur-xl',
                 tones[toast.type] || tones.info,
               )}
             >

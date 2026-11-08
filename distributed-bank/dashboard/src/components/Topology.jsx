@@ -119,7 +119,7 @@ function ReplicaNode({
           ? 'border-rose-400/25 bg-rose-500/[0.035]'
           : unknown
             ? 'border-white/[0.07] bg-white/[0.015]'
-            : 'border-white/[0.08] bg-[#0b1117] hover:border-white/[0.16]',
+            : 'border-white/[0.08] bg-elevated hover:border-white/[0.16]',
         serviced && !down && 'border-emerald-400/50 bg-emerald-400/[0.055] shadow-[0_0_22px_-10px_rgba(52,211,153,0.65)]',
       )}
     >
@@ -377,7 +377,7 @@ export function Topology({
           <motion.div
             layout
             className={cn(
-              'relative flex-1 overflow-hidden rounded-xl border bg-[#0a1114]/90 px-3.5 py-3',
+              'relative flex-1 overflow-hidden rounded-xl border bg-elevated/90 px-3.5 py-3',
               gatewayStatus === 'UP'
                 ? 'border-emerald-400/20 shadow-[0_0_40px_-24px_rgba(52,211,153,0.5)]'
                 : gatewayStatus === 'DOWN'
@@ -448,10 +448,10 @@ export function Topology({
             className={cn(
               'relative overflow-hidden rounded-xl border px-3.5 py-3',
               coordinatorStatus === 'UP'
-                ? 'border-violet-400/20 bg-[#0d0b16]/90 shadow-[0_0_44px_-26px_rgba(167,139,250,0.6)]'
+                ? 'border-violet-400/20 bg-elevated/90 shadow-[0_0_44px_-26px_rgba(167,139,250,0.6)]'
                 : coordinatorStatus === 'DOWN'
                   ? 'border-rose-400/30 bg-rose-950/[0.12]'
-                  : 'border-white/10 bg-[#0b0e14]/90',
+                  : 'border-white/10 bg-elevated/90',
             )}
           >
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent" />
@@ -512,7 +512,7 @@ export function Topology({
               style={{ animationDelay: '700ms' }}
             />
           </div>
-          <span className="absolute left-1/2 top-1.5 -translate-x-1/2 rounded bg-[#080c11] px-1.5 font-mono text-[7.5px] uppercase tracking-[0.14em] text-slate-600">
+          <span className="absolute left-1/2 top-1.5 -translate-x-1/2 rounded bg-ink px-1.5 font-mono text-[7.5px] uppercase tracking-[0.14em] text-slate-600">
             participants
           </span>
         </div>

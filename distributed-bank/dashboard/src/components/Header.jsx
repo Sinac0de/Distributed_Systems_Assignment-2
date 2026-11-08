@@ -1,6 +1,7 @@
-import { Activity, Clock3, FlaskConical, Layers3, Radio, RefreshCw, WifiOff } from 'lucide-react'
+import { Activity, Clock3, FlaskConical, Layers3, Moon, Radio, RefreshCw, Sun, WifiOff } from 'lucide-react'
 import { Badge, cn } from './ui'
 import { formatUptime } from '../lib/constants'
+import { useTheme } from '../hooks/useTheme'
 
 export function Header({
   mode,
@@ -12,6 +13,7 @@ export function Header({
   desiredReplicaCount,
   autoFallback,
 }) {
+  const { theme, toggleTheme } = useTheme()
   const liveDown = mode === 'live' && gatewayUp === false
   const connecting = mode === 'live' && gatewayUp === null
 
@@ -25,12 +27,12 @@ export function Header({
           : { tone: 'emerald', label: 'LIVE · POLLING', dot: 'bg-emerald-400' }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#05070b]/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-ink/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-300/20 bg-gradient-to-br from-emerald-400/15 via-cyan-400/10 to-transparent shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
             <Layers3 size={20} className="text-emerald-300" strokeWidth={1.7} />
-            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-[#05070b] bg-emerald-400 shadow-[0_0_10px_2px_rgba(52,211,153,0.5)]" />
+            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-ink bg-emerald-400 shadow-[0_0_10px_2px_rgba(52,211,153,0.5)]" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -134,6 +136,17 @@ export function Header({
               Demo
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-pressed={theme === 'light'}
+            className="flex h-[31px] w-[31px] items-center justify-center rounded-lg border border-white/[0.08] bg-black/40 text-slate-400 transition hover:border-white/20 hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40"
+          >
+            {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
+          </button>
         </div>
       </div>
 

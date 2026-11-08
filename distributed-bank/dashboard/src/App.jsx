@@ -13,7 +13,7 @@ export default function App() {
   const dashboard = useDashboard()
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#05070b] text-slate-200">
+    <div className="relative min-h-screen overflow-x-hidden bg-ink text-slate-200">
       {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
         <div className="absolute inset-0 grid-surface opacity-40 [mask-image:radial-gradient(ellipse_at_50%_0%,black_20%,transparent_75%)]" />
